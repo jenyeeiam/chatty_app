@@ -23,6 +23,7 @@ const App = React.createClass({
   //send the message to the websocket server
   onSendMessage: function(user, text) {
     let currentUser = this.state.data.currentUser.name;
+    console.log(text);
     if (!user) {
       user = "Anonymous";
     }
