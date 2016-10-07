@@ -23,6 +23,7 @@ const App = React.createClass({
   //send the message to the websocket server
   onSendMessage: function(user, text) {
     let currentUser = this.state.data.currentUser.name;
+    console.log("Check users", currentUser, user);
     if (!user) {
       user = "Anonymous";
     }
@@ -48,9 +49,6 @@ const App = React.createClass({
 
   pushMessage: function (message) {
     let pushedMsgs = this.state.data.messages.push(message);
-    // let newUser =  message.username;
-    // this.state.data.currentUser.name = newUser;
-    // return this.state.data;
     return pushedMsgs;
   },
 
@@ -64,21 +62,23 @@ const App = React.createClass({
     //message received from the server
     this.socket.onmessage = (event) => {
       let parsedMsg = JSON.parse(event.data);
-      console.log(parsedMsg);
+      //console.log(parsedMsg);
       switch(parsedMsg.type) {
         //same user
         case "incomingMessage":
           //let newStateSameUser = this.pushMessage(parsedMsg);
           let msgArr1 = this.pushMessage(parsedMsg);
-          let newStateSameUser = Object.assign({}, this.state.data, {name: parsedMsg.username}, msgArr1);
+          let newStateSameUser = Object.assign({}, this.state.data, {currentUser: {name: parsedMsg.username}}, msgArr1);
           this.setState({data: newStateSameUser});
+          //debugger;
           break;
         //different user
         case "incomingNotification":
           let msgArr2 = this.pushMessage(parsedMsg);
           //let newStateDiffUser = this.pushMessage(parsedMsg);
-          let newStateDiffUser = Object.assign({}, this.state.data, {name: parsedMsg.username}, msgArr2);
+          let newStateDiffUser = Object.assign({}, this.state.data, {currentUser: {name: parsedMsg.username}}, msgArr2);
           this.setState({data: newStateDiffUser});
+          //debugger;
           break;
         case "colorAssigned":
           let textColor = Object.assign({}, this.state.data, {color: parsedMsg});

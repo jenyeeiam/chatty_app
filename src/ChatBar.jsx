@@ -18,12 +18,14 @@ const ChatBar = React.createClass({
   },
 
   //sends the message contact back to the parent
-  isEnter: function(event) {
+  sendMessage: function(event) {
     if (event.keyCode === 13) {
       this.props.onSendMessage(this.state.currentUser, this.state.currentText);
       this.state.currentText = "";
     }
   },
+
+  //check user function before sending to App and/or validate text field (ie alert if empty)
 
   render: function() {
     console.log("rendering <ChatBar/>");
@@ -46,7 +48,7 @@ const ChatBar = React.createClass({
           //changes value bc of local function
           onChange={this.onChatBarChange}
           //waits for the enter key be hit
-          onKeyDown={this.isEnter}
+          onKeyDown={this.sendMessage}
         />
       </footer>
     );
