@@ -23,7 +23,6 @@ const App = React.createClass({
   //send the message to the websocket server
   onSendMessage: function(user, text) {
     let currentUser = this.state.data.currentUser.name;
-    console.log(text);
     if (!user) {
       user = "Anonymous";
     }
@@ -32,7 +31,8 @@ const App = React.createClass({
       let newMsg = {
         username: user,
         content: currentUser + " changed their name to " + user,
-        type: "postNotification"
+        type: "postNotification",
+        color: this.state.data.color
       }
       this.socket.send(JSON.stringify(newMsg));
     }
@@ -40,7 +40,8 @@ const App = React.createClass({
     let newMsg = {
       username: user,
       content: text,
-      type: "postMessage"
+      type: "postMessage",
+      color: this.state.data.color
     }
     this.socket.send(JSON.stringify(newMsg));
   },
