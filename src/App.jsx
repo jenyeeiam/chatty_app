@@ -11,7 +11,11 @@ const App = React.createClass({
       currentUser: {name: "Anonymous"},
       messages: [],
       type: "",
-      numUsers: 1
+      numUsers: 1,
+      color: {
+        color: "black",
+        type: ""
+      }
     };
 
     return {data: data};
@@ -26,7 +30,6 @@ const App = React.createClass({
       user = "Anonymous";
     }
     if (currentUser !== user) {
-      console.log("different name");
       let newMsg = {
         username: user,
         content: currentUser + " changed their name to " + user,
@@ -65,7 +68,6 @@ const App = React.createClass({
     //message received from the server
     this.socket.onmessage = (event) => {
       let parsedMsg = JSON.parse(event.data);
-      console.log("parsed message", parsedMsg);
       switch(parsedMsg.type) {
         case "incomingMessage":
           let newStateSameUser = this.pushMessage(parsedMsg);
@@ -75,10 +77,13 @@ const App = React.createClass({
           let newStateDiffUser = this.pushMessage(parsedMsg);
           this.setState({data: newStateDiffUser});
           break;
+        case "colorAssigned":
+          let textColor = Object.assign({}, this.state.data, {color: parsedMsg});
+          //socket.send the color back to the server;
+          this.setState({data: textColor});
+          break;
         default:
-          //let userCount = this.pushMessage(parsedMsg);
-          let userCount = Object.assign({}, this.state.data, {numUsers: parsedMsg})
-          console.log(userCount);
+          let userCount = Object.assign({}, this.state.data, {numUsers: parsedMsg});
           this.setState({data: userCount});
       }
 
@@ -99,7 +104,7 @@ const App = React.createClass({
         <MessageList
           //send the message array to MessageList
           messages={this.state.data.messages}
-          //type={this.state.data.type}
+          color={this.state.data.color.color}
         />
         <ChatBar
           //send the current user to the footer

@@ -7,19 +7,23 @@ const MessageList = React.createClass({
     //console.log("rendering <MessageList/>");
     let messages = this.props.messages;
     let user = messages.username;
-    //console.log("The type", this.props.type);
-
-
-
-
+    let textColor = this.props.color;
     return (
       <div id="message-list">
 
         {messages.map((msgObj) => {
           if (msgObj.type === "incomingNotification") {
-            return <MessageNotification key={msgObj.key} content={msgObj.content} />
+            return <MessageNotification
+              key={msgObj.key}
+              content={msgObj.content}
+            />
           } else {
-          return <Message key={msgObj.key} username={msgObj.username} content={msgObj.content} />
+          return <Message
+            key={msgObj.key}
+            username={msgObj.username}
+            color={textColor}
+            content={msgObj.content}
+          />
         }
 
         })}
