@@ -7,14 +7,17 @@ import NumberUsers from './NumberUsers.jsx';
 const App = React.createClass({
   getInitialState: function() {
     let data = {
-      currentUser: {name: "Anonymous"},
+      currentUser: {
+        name: "Anonymous",
+        color: "black"
+      },
       messages: [],
       type: "",
       numUsers: 1,
-      color: {
-        color: "black",
-        type: ""
-      }
+      // color: {
+      //   color: "black",
+      //   type: ""
+      // }
     };
 
     return {data: data};
@@ -33,7 +36,7 @@ const App = React.createClass({
         username: user,
         content: currentUser + " changed their name to " + user,
         type: "postNotification",
-        color: this.state.data.color
+        color: this.state.data.currentUser.color
       }
       this.socket.send(JSON.stringify(newMsg));
     }
@@ -42,7 +45,7 @@ const App = React.createClass({
       username: user,
       content: text,
       type: "postMessage",
-      color: this.state.data.color
+      color: this.state.data.currentUser.color
     }
     this.socket.send(JSON.stringify(newMsg));
   },
@@ -62,21 +65,23 @@ const App = React.createClass({
     //message received from the server
     this.socket.onmessage = (event) => {
       let parsedMsg = JSON.parse(event.data);
+      console.log(parsedMsg);
       switch(parsedMsg.type) {
         //same user
         case "incomingMessage":
           let msgArr1 = this.pushMessage(parsedMsg);
-          let newStateSameUser = Object.assign({}, this.state.data, {currentUser: {name: parsedMsg.username}}, msgArr1);
+          let newStateSameUser = Object.assign({}, this.state.data, {currentUser: {name: parsedMsg.username, color: parsedMsg.color}}, msgArr1);
           this.setState({data: newStateSameUser});
           break;
         //different user
         case "incomingNotification":
           let msgArr2 = this.pushMessage(parsedMsg);
-          let newStateDiffUser = Object.assign({}, this.state.data, {currentUser: {name: parsedMsg.username}}, msgArr2);
+          let newStateDiffUser = Object.assign({}, this.state.data, {currentUser: {name: parsedMsg.username, color: parsedMsg.color}}, msgArr2);
           this.setState({data: newStateDiffUser});
           break;
         case "colorAssigned":
-          let textColor = Object.assign({}, this.state.data, {color: parsedMsg});
+          //let textColor = Object.assign({}, this.state.data, {color: parsedMsg});
+          let textColor = Object.assign({}, this.state.data, {currentUser: {name: "Anonymous", color: parsedMsg.color}});
           //socket.send the color back to the server;
           this.setState({data: textColor});
           break;
@@ -98,10 +103,10 @@ const App = React.createClass({
         </nav>
         <MessageList
           messages={this.state.data.messages}
-          color={this.state.data.color.color}
+          color={this.state.data.currentUser.color}
         />
         <ChatBar
-          currentUser={this.state.data.currentUser}
+          currentUser={this.state.data.currentUser.name}
           //this callback receives the message after hitting the enter key in the chatbar
           onSendMessage={this.onSendMessage}
         />

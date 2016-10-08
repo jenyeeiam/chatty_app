@@ -28,8 +28,8 @@ const ChatBar = React.createClass({
   //check user function before sending to App and/or validate text field (ie alert if empty)
 
   render: function() {
-    console.log("rendering <ChatBar/>");
-    let currentName = this.props.currentUser.name;
+    //console.log("rendering <ChatBar/>");
+    //let currentName = this.props.currentUser.name;
     return (
       <footer>
         <input
