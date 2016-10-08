@@ -62,23 +62,18 @@ const App = React.createClass({
     //message received from the server
     this.socket.onmessage = (event) => {
       let parsedMsg = JSON.parse(event.data);
-      //console.log(parsedMsg);
       switch(parsedMsg.type) {
         //same user
         case "incomingMessage":
-          //let newStateSameUser = this.pushMessage(parsedMsg);
           let msgArr1 = this.pushMessage(parsedMsg);
           let newStateSameUser = Object.assign({}, this.state.data, {currentUser: {name: parsedMsg.username}}, msgArr1);
           this.setState({data: newStateSameUser});
-          //debugger;
           break;
         //different user
         case "incomingNotification":
           let msgArr2 = this.pushMessage(parsedMsg);
-          //let newStateDiffUser = this.pushMessage(parsedMsg);
           let newStateDiffUser = Object.assign({}, this.state.data, {currentUser: {name: parsedMsg.username}}, msgArr2);
           this.setState({data: newStateDiffUser});
-          //debugger;
           break;
         case "colorAssigned":
           let textColor = Object.assign({}, this.state.data, {color: parsedMsg});
