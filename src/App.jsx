@@ -80,7 +80,6 @@ const App = React.createClass({
           this.setState({data: newStateDiffUser});
           break;
         case "colorAssigned":
-          //let textColor = Object.assign({}, this.state.data, {color: parsedMsg});
           let textColor = Object.assign({}, this.state.data, {currentUser: {name: "Anonymous", color: parsedMsg.color}});
           //socket.send the color back to the server;
           this.setState({data: textColor});
