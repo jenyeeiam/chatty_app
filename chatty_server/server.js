@@ -37,9 +37,9 @@ wss.on('connection', (socket) => {
   //broadcast how many users are online
   let numUsers = wss.clients.length;
   wss.broadcast(numUsers.toString());
-  //assign a random color to user
+  //assign a random color to user an initialize their name
   let randomColor = colors[getRandomInt(0, colors.length -1)];
-  socket.send(JSON.stringify({type: "colorAssigned", color: randomColor}));
+  socket.send(JSON.stringify({type: "colorAssigned", color: randomColor, name: "Anonymous"}));
 
   socket.on('message', function(message) {
     let serverMsg = JSON.parse(message);

@@ -7,34 +7,38 @@ import NumberUsers from './NumberUsers.jsx';
 const App = React.createClass({
   getInitialState: function() {
     let data = {
-      currentUser: {name: "Anonymous"},
+      // currentUser: {
+      //   name: "Anonymous",
+      //   color: "black"
+      // },
       messages: [],
       type: "",
       numUsers: 1,
-      color: {
-        color: "black",
-        type: ""
-      }
+      color: "black",
+      myName: "Anonymous"//persists//assigned once upon connection
     };
 
     return {data: data};
   },
 
   //send the message to the websocket server
-  onSendMessage: function(user, text) {
-    let currentUser = this.state.data.currentUser.name;
-    console.log("Check users", currentUser, user);
+  onSendMessage: function(user, text, color) {
+    let myName = this.state.data.myName;
+    let myColor = this.state.data.color;
+    //let currentUser = this.state.data.currentUser.name;
+    console.log("Check users", myName, user);
     if (!user) {
       user = "Anonymous";
     }
     //if the user changed their name, send a notification message
-    if (currentUser !== user) {
+    if (myName !== user) {
       let newMsg = {
         username: user,
-        content: currentUser + " changed their name to " + user,
+        content: myName + " changed their name to " + user,
         type: "postNotification",
-        color: this.state.data.color
       }
+      let changeMyName = Object.assign({}, this.state.data, {myName: user});
+      this.setState({data: changeMyName});
       this.socket.send(JSON.stringify(newMsg));
     }
     //always send the message content to the server
@@ -42,7 +46,6 @@ const App = React.createClass({
       username: user,
       content: text,
       type: "postMessage",
-      color: this.state.data.color
     }
     this.socket.send(JSON.stringify(newMsg));
   },
@@ -60,24 +63,25 @@ const App = React.createClass({
       console.log("Connected to websocket server");
     }
     //message received from the server
+    //check state for user:color
     this.socket.onmessage = (event) => {
       let parsedMsg = JSON.parse(event.data);
+      console.log(parsedMsg);
       switch(parsedMsg.type) {
         //same user
         case "incomingMessage":
           let msgArr1 = this.pushMessage(parsedMsg);
-          let newStateSameUser = Object.assign({}, this.state.data, {currentUser: {name: parsedMsg.username}}, msgArr1);
+          let newStateSameUser = Object.assign({}, this.state.data, msgArr1);
           this.setState({data: newStateSameUser});
           break;
         //different user
         case "incomingNotification":
           let msgArr2 = this.pushMessage(parsedMsg);
-          let newStateDiffUser = Object.assign({}, this.state.data, {currentUser: {name: parsedMsg.username}}, msgArr2);
+          let newStateDiffUser = Object.assign({}, this.state.data, msgArr2);
           this.setState({data: newStateDiffUser});
           break;
         case "colorAssigned":
-          let textColor = Object.assign({}, this.state.data, {color: parsedMsg});
-          //socket.send the color back to the server;
+          let textColor = Object.assign({}, this.state.data, {color: parsedMsg.color}, {myName: parsedMsg.name});
           this.setState({data: textColor});
           break;
         default:
@@ -98,11 +102,11 @@ const App = React.createClass({
         </nav>
         <MessageList
           messages={this.state.data.messages}
-          color={this.state.data.color.color}
+          color={this.state.data.color}
         />
         <ChatBar
-          currentUser={this.state.data.currentUser}
           //this callback receives the message after hitting the enter key in the chatbar
+          color={this.state.data.color}
           onSendMessage={this.onSendMessage}
         />
       </div>
