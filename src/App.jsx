@@ -22,8 +22,9 @@ const App = React.createClass({
   },
 
   //send the message to the websocket server
-  onSendMessage: function(user, text) {
+  onSendMessage: function(user, text, color) {
     let myName = this.state.data.myName;
+    let myColor = this.state.data.color;
     //let currentUser = this.state.data.currentUser.name;
     console.log("Check users", myName, user);
     if (!user) {
@@ -35,7 +36,6 @@ const App = React.createClass({
         username: user,
         content: myName + " changed their name to " + user,
         type: "postNotification",
-        color: this.state.data.color
       }
       let changeMyName = Object.assign({}, this.state.data, {myName: user});
       this.setState({data: changeMyName});
@@ -46,7 +46,6 @@ const App = React.createClass({
       username: user,
       content: text,
       type: "postMessage",
-      color: this.state.data.color
     }
     this.socket.send(JSON.stringify(newMsg));
   },
@@ -107,6 +106,7 @@ const App = React.createClass({
         />
         <ChatBar
           //this callback receives the message after hitting the enter key in the chatbar
+          color={this.state.data.color}
           onSendMessage={this.onSendMessage}
         />
       </div>

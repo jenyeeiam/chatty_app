@@ -20,7 +20,7 @@ const ChatBar = React.createClass({
   //sends the message contact back to the parent
   sendMessage: function(event) {
     if (event.keyCode === 13) {
-      this.props.onSendMessage(this.state.currentUser, this.state.currentText);
+      this.props.onSendMessage(this.state.currentUser, this.state.currentText, this.props.color);
       this.state.currentText = "";
     }
   },
