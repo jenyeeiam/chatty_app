@@ -29,7 +29,7 @@ const ChatBar = React.createClass({
 
   render: function() {
     //console.log("rendering <ChatBar/>");
-    let currentName = this.props.currentUser.name;
+    //let currentName = this.props.currentUser.name;
 
     return (
       <footer>
